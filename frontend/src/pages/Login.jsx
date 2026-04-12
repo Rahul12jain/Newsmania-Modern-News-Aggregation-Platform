@@ -11,6 +11,7 @@ function Login({ mode = "signin" }) {
     name: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
@@ -46,11 +47,21 @@ function Login({ mode = "signin" }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
+
+    if (isSignup && formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
       if (isSignup) {
-        await signUp(formData);
+        await signUp({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        });
       } else {
         await signIn({
           email: formData.email,
@@ -167,6 +178,24 @@ function Login({ mode = "signin" }) {
                 </button>
               </div>
             </label>
+
+            {isSignup && (
+              <label className="block">
+                <span className="text-sm font-medium text-gray-800">
+                  Confirm password
+                </span>
+                <input
+                  className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 outline-none transition focus:border-gray-950 focus:ring-2 focus:ring-gray-950/10"
+                  minLength={8}
+                  name="confirmPassword"
+                  onChange={handleChange}
+                  placeholder="Re-enter your password"
+                  required
+                  type={showPassword ? "text" : "password"}
+                  value={formData.confirmPassword}
+                />
+              </label>
+            )}
 
             <button
               className="flex w-full items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-3 font-semibold text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-green-300"
