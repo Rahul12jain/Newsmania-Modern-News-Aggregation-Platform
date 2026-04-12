@@ -26,9 +26,11 @@ dist-ssr
 node_modules/
 .env
 .env.local
+backend/data/
 
 Frontend/dist/
 Backend/dist/
 
 .DS_Store
+ 
 

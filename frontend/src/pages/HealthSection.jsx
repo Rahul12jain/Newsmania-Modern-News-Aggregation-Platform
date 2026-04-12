@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 const HealthSection = () => {
   const healthArticles = [
     {
+      id: 1,
       image:
         "https://jgu.edu.in/blog/wp-content/uploads/2023/12/shutterstock_1456161239.jpg",
       title: "Groundbreaking Gene Therapy Shows Promise for Rare Diseases",
@@ -12,8 +13,9 @@ const HealthSection = () => {
       source: "Medical News Today",
     },
     {
+      id: 2,
       image:
-        "https://www.techmagic.co/blog/content/images/2025/04/cover-Mental-Health-App--1-.png",
+        "https://images.indianexpress.com/2024/02/mental-health-app.jpg?w=1200",
       title:
         "Mental Health Apps: Do They Really Work? New Study Provides Answers",
       description:
@@ -21,6 +23,7 @@ const HealthSection = () => {
       source: "Healthline",
     },
     {
+      id: 3,
       image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061",
       title: "Mediterranean Diet Linked to Longer Life Expectancy",
       description:
@@ -28,6 +31,7 @@ const HealthSection = () => {
       source: "Health Daily",
     },
     {
+      id: 4,
       image: "https://images.unsplash.com/photo-1554284126-aa88f22d8b74",
       title: "Breakthrough Cancer Treatment Enters Phase III Trials",
       description:
@@ -35,6 +39,7 @@ const HealthSection = () => {
       source: "The Lancet",
     },
     {
+      id: 5,
       image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773",
       title: "Mindfulness and Meditation Reduce Stress by 40%, Study Finds",
       description:
@@ -42,6 +47,7 @@ const HealthSection = () => {
       source: "Wellness Weekly",
     },
     {
+      id: 6,
       image:
         "https://images.squarespace-cdn.com/content/v1/5bac99efb2cf79a76d80781d/2c311f8b-f4e5-4edd-9bb9-c6794678479a/Harnessing+AI.jpg",
       title: "AI-Powered Diagnostics Transform Rural Healthcare Access",
@@ -50,6 +56,7 @@ const HealthSection = () => {
       source: "Global Health Review",
     },
     {
+      id: 7,
       image:
         "https://bpincontrol.in/wp-content/uploads/2023/08/Heart-Disease.jpg",
       title: "Sleep Deprivation Linked to Increased Heart Disease Risk",
@@ -58,6 +65,7 @@ const HealthSection = () => {
       source: "Sleep Foundation",
     },
     {
+      id: 8,
       image: "https://images.unsplash.com/photo-1579154204601-01588f351e67",
       title: "Fitness Trackers Improve Physical Activity Consistency",
       description:
@@ -65,6 +73,7 @@ const HealthSection = () => {
       source: "Fitness Today",
     },
     {
+      id: 9,
       image: "https://images.unsplash.com/photo-1581594693702-fbdc51b2763b",
       title: "New Vaccine Platform Accelerates Pandemic Response",
       description:
@@ -88,54 +97,22 @@ const HealthSection = () => {
 
       {/* Cards */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {healthArticles.map((item, index) => (
-          <div
-            key={index}
-            className="bg-white rounded-2xl shadow-sm hover:shadow-lg transition duration-300 overflow-hidden group cursor-pointer"
-          >
-            {/* Image */}
-            <div className="overflow-hidden">
-              <img
-                src={item.image}
-                alt={item.title}
-                className="w-full h-48 object-cover transition duration-500 group-hover:scale-105"
-              />
-            </div>
+        {healthArticles.map((item) => (
+          <Link key={item.id} to="/health">
+            <div className="bg-white rounded-2xl shadow-sm hover:shadow-lg transition duration-300 overflow-hidden group cursor-pointer">
+              <div className="overflow-hidden">
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-full h-48 object-cover transition duration-500 group-hover:scale-105"
+                />
+              </div>
 
-            {/* Content */}
-            <div className="p-6">
-              <span className="text-xs font-medium text-green-600 bg-green-100 px-3 py-1 rounded-full">
-                Health
-              </span>
-
-              <h3 className="mt-4 text-xl font-semibold text-gray-900">
-                {item.title}
-              </h3>
-
-              <p className="text-gray-600 mt-3">{item.description}</p>
-
-              <div className="flex items-center justify-between mt-6 text-sm text-gray-500">
-                <div className="flex items-center gap-2">
-                  {item.source}
-                  <div className="flex items-center gap-1">
-                    <Clock size={14} />
-                    1y ago
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <Bookmark
-                    size={18}
-                    className="cursor-pointer hover:text-black"
-                  />
-                  <Share2
-                    size={18}
-                    className="cursor-pointer hover:text-black"
-                  />
-                </div>
+              <div className="p-6">
+                <h3 className="text-lg font-semibold">{item.title}</h3>
               </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </section>

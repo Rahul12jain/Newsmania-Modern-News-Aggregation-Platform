@@ -8,6 +8,7 @@ import Entertainment from "./pages/Entertainment";
 import Health from "./pages/Health";
 import Login from "./pages/Login";
 import Trending from "./pages/Trending";
+import ArticleDetails from "./pages/ArticleDetails";
 
 
 
@@ -21,8 +22,11 @@ function App() {
         <Route path="technology" element={<Technology />} />
         <Route path="entertainment" element={<Entertainment />} />
         <Route path="health" element={<Health />} />
-        <Route path="login" element={<Login />} />
+        <Route path="login" element={<Login mode="signin" />} />
+        <Route path="signup" element={<Login mode="signup" />} />
         <Route path="trending" element={<Trending />} />
+
+        <Route path="article/:id" element={<ArticleDetails />} />
       </Route>
     </Routes>
   );

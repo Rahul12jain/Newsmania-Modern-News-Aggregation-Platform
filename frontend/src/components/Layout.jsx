@@ -6,7 +6,7 @@ function Layout() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen p-4">
+      <main className="flex-grow pt-6">
         <Outlet />
       </main>
       <Footer />

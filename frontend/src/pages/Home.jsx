@@ -3,6 +3,7 @@ import Hero from "./Hero";
 import TrendingSection from "./TrendingSection";
 import SportsAndTechSection from "./SportsAndTechSection";
 import HealthSection from "./HealthSection";
+import EntertainmentSection from "./EntertainmentSection";
 
 function Home() {
   return (
@@ -12,6 +13,7 @@ function Home() {
        <BusinessSection/>
        <SportsAndTechSection/>
        <HealthSection/>
+       <EntertainmentSection/>
      </>
   );
 }
