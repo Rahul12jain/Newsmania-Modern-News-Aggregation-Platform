@@ -4,12 +4,24 @@ import { createJwt, verifyJwt } from "./auth.js";
 import { connectDB } from "./db.js";
 import { User } from "./models/User.js";
 
-const sendJson = (response, statusCode, payload) => {
-  response.writeHead(statusCode, {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": config.frontendOrigin,
+const getCorsHeaders = (request) => {
+  const requestOrigin = request.headers.origin;
+  const allowedOrigin = config.frontendOrigins.includes(requestOrigin)
+    ? requestOrigin
+    : config.frontendOrigins[0];
+
+  return {
+    "Access-Control-Allow-Origin": allowedOrigin,
     "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    Vary: "Origin",
+  };
+};
+
+const sendJson = (request, response, statusCode, payload) => {
+  response.writeHead(statusCode, {
+    "Content-Type": "application/json",
+    ...getCorsHeaders(request),
   });
   response.end(JSON.stringify(payload));
 };
@@ -55,17 +67,19 @@ const handleSignup = async (request, response) => {
   const { name = "", email = "", password = "" } = await readJsonBody(request);
 
   if (!name.trim() || !email.trim() || !password) {
-    return sendJson(response, 400, {
+    return sendJson(request, response, 400, {
       message: "Name, email, and password are required.",
     });
   }
 
   if (!isEmail(email)) {
-    return sendJson(response, 400, { message: "Enter a valid email address." });
+    return sendJson(request, response, 400, {
+      message: "Enter a valid email address.",
+    });
   }
 
   if (password.length < 8) {
-    return sendJson(response, 400, {
+    return sendJson(request, response, 400, {
       message: "Password must be at least 8 characters.",
     });
   }
@@ -73,7 +87,7 @@ const handleSignup = async (request, response) => {
   const existingUser = await User.findOne({ email: email.toLowerCase().trim() });
 
   if (existingUser) {
-    return sendJson(response, 409, {
+    return sendJson(request, response, 409, {
       message: "An account with this email already exists.",
     });
   }
@@ -81,12 +95,12 @@ const handleSignup = async (request, response) => {
   try {
     const user = await User.create({ name, email, password });
 
-    return sendJson(response, 201, issueAuthResponse(user));
+    return sendJson(request, response, 201, issueAuthResponse(user));
   } catch (error) {
     const validationMessage = getValidationMessage(error);
 
     if (validationMessage) {
-      return sendJson(response, error.code === 11000 ? 409 : 400, {
+      return sendJson(request, response, error.code === 11000 ? 409 : 400, {
         message: validationMessage,
       });
     }
@@ -102,10 +116,12 @@ const handleSignin = async (request, response) => {
   );
 
   if (!user || !(await user.comparePassword(password))) {
-    return sendJson(response, 401, { message: "Invalid email or password." });
+    return sendJson(request, response, 401, {
+      message: "Invalid email or password.",
+    });
   }
 
-  return sendJson(response, 200, issueAuthResponse(user));
+  return sendJson(request, response, 200, issueAuthResponse(user));
 };
 
 const handleMe = async (request, response) => {
@@ -119,25 +135,28 @@ const handleMe = async (request, response) => {
     const user = await User.findById(payload.sub);
 
     if (!user) {
-      return sendJson(response, 404, { message: "User not found." });
+      return sendJson(request, response, 404, { message: "User not found." });
     }
 
-    return sendJson(response, 200, { user: user.toPublicProfile() });
+    return sendJson(request, response, 200, { user: user.toPublicProfile() });
   } catch {
-    return sendJson(response, 401, { message: "Invalid or expired token." });
+    return sendJson(request, response, 401, {
+      message: "Invalid or expired token.",
+    });
   }
 };
 
 const server = http.createServer(async (request, response) => {
   try {
     if (request.method === "OPTIONS") {
-      return sendJson(response, 204, {});
+      response.writeHead(204, getCorsHeaders(request));
+      return response.end();
     }
 
     const url = new URL(request.url, `http://${request.headers.host}`);
 
     if (request.method === "GET" && url.pathname === "/api/health") {
-      return sendJson(response, 200, { status: "ok" });
+      return sendJson(request, response, 200, { status: "ok" });
     }
 
     if (request.method === "POST" && url.pathname === "/api/auth/signup") {
@@ -152,13 +171,17 @@ const server = http.createServer(async (request, response) => {
       return handleMe(request, response);
     }
 
-    return sendJson(response, 404, { message: "Route not found." });
+    return sendJson(request, response, 404, { message: "Route not found." });
   } catch (error) {
     if (error instanceof SyntaxError) {
-      return sendJson(response, 400, { message: "Request body is invalid." });
+      return sendJson(request, response, 400, {
+        message: "Request body is invalid.",
+      });
     }
 
-    return sendJson(response, 500, { message: "Something went wrong." });
+    return sendJson(request, response, 500, {
+      message: "Something went wrong.",
+    });
   }
 });
 
